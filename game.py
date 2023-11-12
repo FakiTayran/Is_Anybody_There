@@ -40,10 +40,10 @@ class Game:
         self.storage = Room("destroyed cryonics capsules warehouse",["capsul1","capsul2","Wardrobe1","Wardrobe2"])
         self.corridor = Room("in a corridor",None)
         self.lab = Room("in a cryonics lab",["stretcher","dead_body1","dead_body2"])
-        self.surgery = Room("in the surgery","dead_body")
+        self.surgery = Room("in the surgery","dead_body3")
         self.office = Room("in the computing admin office",None)
         self.managerOffice = Room("in the manager office","safe_case")
-        self.stairs = Room("building stairs","dead_body")
+        self.stairs = Room("building stairs","dead_body4")
         self.lobby = Room("in the lobby","")
         self.outside = Room("everywhere is destroyed",None)
 

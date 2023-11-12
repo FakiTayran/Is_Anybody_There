@@ -1,4 +1,5 @@
 import random
+import craft
 
 def rollDice(roll_again_permission):
     min_value = 1
@@ -14,3 +15,8 @@ def rollDice(roll_again_permission):
         else:
             roll_again = "No"
     return returnedValue
+
+def crafting(item1,item2):
+    return craft.possibleCraft(item1,item2)
+
+
