@@ -16,7 +16,7 @@ class Room:
         """
         self.description = description
         self.interactiveItems = interactiveItems
-        self.exits = {}  # Dictionary
+        self.exits = {}  # Dictionary asdasda
 
     def set_exit(self, direction, neighbour, requiredItems, requiredDice,roomPassword):
         """

@@ -1,31 +1,33 @@
+import text_ui
 from text_ui import TextUI
 from backpack import Backpack
 
-craftParts = [{"cable": 2, None: None, None: None, "keylock": None},
-              {"hardMetal": 1, "sharper": 1, "hand_made_knife": None}]
+def possibleCrafts(item1, item2):
+   if((item1=="cable" and item2 == "small_metal_part")):
+        if(inventoryCheck(item1,item2)):
+            resultOfCrafting(item1,item2,"keylock")
+   elif(True):
+        return
+   else:
+       TextUI.print_command("There is no possible craft in the craft list")
 
-
-def possibleCraft(item1, numberofItem1, item2, numberofItem2):
-    item1_data = None
-    item2_data = None
-
-    for part in craftParts:
-        if item1 in part:
-            item1_data = part
-        if item2 in part:
-            item2_data = part
-
-    if item1_data is not None and item2_data is not None:
-        if item1_data[item1] is not None and item1_data[item1] >= numberofItem1:
-            if item2_data[item2] is not None and item2_data[item2] >= numberofItem2:
-                TextUI.print_command("Crafting Successful")
-                item1_data[item1] -= numberofItem1
-                item2_data[item2] -= numberofItem2
-            else:
-                TextUI.print_command(f"Not enough {item2} ")
-        else:
-            TextUI.print_command(f"Not enough {item1} ")
+def inventoryCheck(item1,item2):
+    backpackItems = Backpack.getItems()
+    item1InBackpack = [i for i in backpackItems if i["name"] == item1.name]
+    item2InBackpack = [i for i in backpackItems if i["name"] == item2.name]
+    if (((item1 is not None and item1["number"] > item1InBackpack["number"]) and (item2 is not None and item2["number"] > item2InBackpack["number"]))):
+        TextUI.print_command("Craft Successful...")
+        return True
     else:
-        TextUI.print_command("The items ,that you are providing, are not inside of craft system..")
+        TextUI.print_command("Not enough item for crafting...")
+        return False
+def resultOfCrafting(item1,item2,resultItem):
+    Backpack.remove_item(item1)
+    Backpack.remove_item(item2)
+    Backpack.add_item(resultItem)
+
+
+
+
 
 
