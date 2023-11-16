@@ -3,7 +3,7 @@ Create a room described "description". Initially, it has no exits. The
 'description' is something like 'kitchen' or 'an open court yard'.
 """
 
-import helper
+from mainHelper import MainHelper
 from backpack import Backpack
 from text_ui import TextUI
 
@@ -16,9 +16,11 @@ class Room:
         """
         self.description = description
         self.interactiveItems = interactiveItems
-        self.exits = {}  # Dictionary asdasda
+        self.exits = {}  # Dictionary
+        self.textUI = TextUI()
 
     def set_exit(self, direction, neighbour, requiredItems, requiredDice,roomPassword):
+
         """
             Adds an exit for a room. The exit is stored as a dictionary
             entry of the (key, value) pair (direction, room).
@@ -28,40 +30,41 @@ class Room:
         """
         self.exits[direction] = neighbour
 
-        inventory = Backpack.getItems()
-
+        inventory = ""
+        exitPermission = False
         if roomPassword is not None:
             password = input("Input Password")
             if password == roomPassword:
+                exitPermission = True
                 self.exits[direction] = neighbour
             else:
-                TextUI.print_command("You need to correct password to open" + neighbour)
-                return
+                self.textUI.print_command("You need to correct password to open" + neighbour)
+                exitPermission = False
+
 
         if requiredItems is not None:
             for requiredItem in requiredItems:
                 if requiredItem not in inventory:
-                    TextUI.print_command("You need " + requiredItem + " to open" + neighbour + "'s door")
-                    return
+                    self.textUI.print_command("You need " + requiredItem + " to open" + neighbour + "'s door")
+                    exitPermission = False
                 else:
-                    self.exits[direction] = neighbour
-        else:
-            self.exits[direction] = neighbour
+                    exitPermission = True
+
+        main_helper = MainHelper()
 
         if requiredDice is not None:
             if requiredDice:
-                if helper.rollDice(True) >= requiredDice:
-                    TextUI.print_command("Success...")
-                    self.exits[direction] = neighbour
+                if main_helper.rollDice(roll_again_permission=True,requiredDice=requiredDice) >= requiredDice:
+                    self.textUI.print_command("Success...")
+                    exitPermission = True
                 else:
-                    TextUI.print_command("Failed...")
-                    return
-        else:
+                    self.textUI.print_command("Failed...")
+                    exitPermission = False
+
+        if exitPermission:
             self.exits[direction] = neighbour
-
-
-
-
+        else:
+            self.textUI.print_command("No Permission")
 
     def get_short_description(self):
         """

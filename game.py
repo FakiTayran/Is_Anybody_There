@@ -28,7 +28,7 @@ class Game:
         Initialises the game.
         """
         self.create_rooms()
-        self.current_room = self.outside
+        self.current_room = self.capsul
         self.textUI = TextUI()
 
     def create_rooms(self):
@@ -47,22 +47,23 @@ class Game:
         self.lobby = Room("in the lobby","")
         self.outside = Room("everywhere is destroyed",None)
 
-        self.capsul.set_exit("up",self.storage,None,90,None)
-        self.storage.set_exit("forward",self.corridor,["crowbar"],90,None)
-        self.corridor.set_exit("backwards",self.storage,None,None,None)
-        self.corridor.set_exit("left",self.lab,["access_card"],None,1241)
-        self.lab.set_exit("backwards",self.corridor,None,None,None)
-        self.corridor.set_exit("right",self.surgery,["access_card"],None,None)
-        self.surgery.set_exit("backwards",self.corridor,None,None,None)
-        self.lab.set_exit("forward",self.office,["access_card"],None,4043)
-        self.office.set_exit("backwards",self.corridor,None,None,None)
-        self.office.set_exit("right",self.managerOffice,'manager_office_key',None,None)
-        self.managerOffice.set_exit("backwards",self.office,None,None,None)
-        self.stairs.set_exit("down",self.lobby,None,100,None)
-        self.stairs.set_exit("up",self.corridor,None,None,None)
-        self.lobby.set_exit("forward",self.outside,"building_key",None,)
-        self.lobby.set_exit("backwards",self.stairs,None,None,None)
 
+        self.capsul.set_exit("up", self.storage, None, 90, None)
+        self.storage.set_exit("forward", self.corridor, ["crowbar"], 90, None)
+        self.corridor.set_exit("backwards", self.storage, None, None, None)
+        self.corridor.set_exit("left", self.lab, ["access_card"], None, 1241)
+        self.lab.set_exit("backwards", self.corridor, None, None, None)
+        self.corridor.set_exit("right", self.surgery, ["access_card"], None, None)
+        self.corridor.set_exit("forward", self.stairs, ["keylock"], None, None)
+        self.surgery.set_exit("backwards", self.corridor, None, None, None)
+        self.lab.set_exit("forward", self.office, ["access_card"], None, 4043)
+        self.office.set_exit("backwards", self.corridor, None, None, None)
+        self.office.set_exit("right", self.managerOffice, ["manager_office_key"], None, None)
+        self.managerOffice.set_exit("backwards", self.office, None, None, None)
+        self.stairs.set_exit("down", self.lobby, None, 100, None)
+        self.stairs.set_exit("up", self.corridor, None, None, None)
+        self.lobby.set_exit("forward", self.outside, ["building_key"], None)
+        self.lobby.set_exit("backwards", self.stairs, None, None, None)
 
 
 
@@ -76,6 +77,10 @@ class Game:
         while not finished:
             command = self.textUI.get_command()  # Returns a 2-tuple
             finished = self.process_command(command)
+
+
+
+
         print("Thank you for playing!")
 
     def print_welcome(self):
