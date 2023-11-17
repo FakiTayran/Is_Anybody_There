@@ -18,6 +18,8 @@ converted to Python by Kingsley Sage.
 
 from text_ui import TextUI
 from room import Room
+from mainHelper import MainHelper
+from backpack import Backpack
 import time
 
 
@@ -36,34 +38,33 @@ class Game:
             Sets up all room assets.
         :return: None
         """
-        self.capsul = Room("an overturned and damaged cryonics capsul",None)
-        self.storage = Room("destroyed cryonics capsules warehouse",["capsul1","capsul2","Wardrobe1","Wardrobe2"])
-        self.corridor = Room("in a corridor",None)
-        self.lab = Room("in a cryonics lab",["stretcher","dead_body1","dead_body2"])
-        self.surgery = Room("in the surgery","dead_body3")
-        self.office = Room("in the computing admin office",None)
-        self.managerOffice = Room("in the manager office","safe_case")
-        self.stairs = Room("building stairs","dead_body4")
-        self.lobby = Room("in the lobby","")
-        self.outside = Room("everywhere is destroyed",None)
+        self.capsul = Room("an overturned and damaged cryonics capsul",None,None,None,None)
+        self.storage = Room("destroyed cryonics capsules warehouse",["capsul1","capsul2","Wardrobe1","Wardrobe2"],None, 90, None)
+        self.corridor = Room("in a corridor",None,["crowbar"], 90, None)
+        self.lab = Room("in a cryonics lab",["stretcher","dead_body1","dead_body2"],["access_card"], None, 1241)
+        self.surgery = Room("in the surgery","dead_body3", ["access_card"], None, None)
+        self.office = Room("in the computing admin office",None,["access_card"], None, 4043)
+        self.managerOffice = Room("in the manager office","safe_case",["manager_office_key"], None, None)
+        self.stairs = Room("building stairs","dead_body4", ["keylock"], None, None)
+        self.lobby = Room("in the lobby","",None, 100, None)
+        self.outside = Room("everywhere is destroyed",None, ["building_key"], None,None)
 
-
-        self.capsul.set_exit("up", self.storage, None, 90, None)
-        self.storage.set_exit("forward", self.corridor, ["crowbar"], 90, None)
-        self.corridor.set_exit("backwards", self.storage, None, None, None)
-        self.corridor.set_exit("left", self.lab, ["access_card"], None, 1241)
-        self.lab.set_exit("backwards", self.corridor, None, None, None)
-        self.corridor.set_exit("right", self.surgery, ["access_card"], None, None)
-        self.corridor.set_exit("forward", self.stairs, ["keylock"], None, None)
-        self.surgery.set_exit("backwards", self.corridor, None, None, None)
-        self.lab.set_exit("forward", self.office, ["access_card"], None, 4043)
-        self.office.set_exit("backwards", self.corridor, None, None, None)
-        self.office.set_exit("right", self.managerOffice, ["manager_office_key"], None, None)
-        self.managerOffice.set_exit("backwards", self.office, None, None, None)
-        self.stairs.set_exit("down", self.lobby, None, 100, None)
-        self.stairs.set_exit("up", self.corridor, None, None, None)
-        self.lobby.set_exit("forward", self.outside, ["building_key"], None)
-        self.lobby.set_exit("backwards", self.stairs, None, None, None)
+        self.capsul.set_exit("up", self.storage)
+        self.storage.set_exit("forward", self.corridor)
+        self.corridor.set_exit("backwards", self.storage)
+        self.corridor.set_exit("left", self.lab)
+        self.lab.set_exit("backwards", self.corridor)
+        self.corridor.set_exit("right", self.surgery)
+        self.corridor.set_exit("forward", self.stairs)
+        self.surgery.set_exit("backwards", self.corridor)
+        self.lab.set_exit("forward", self.office)
+        self.office.set_exit("backwards", self.corridor)
+        self.office.set_exit("right", self.managerOffice)
+        self.managerOffice.set_exit("backwards",self.office)
+        self.stairs.set_exit("down", self.lobby)
+        self.stairs.set_exit("up", self.corridor)
+        self.lobby.set_exit("forward", self.outside)
+        self.lobby.set_exit("backwards", self.stairs)
 
 
 
@@ -77,8 +78,6 @@ class Game:
         while not finished:
             command = self.textUI.get_command()  # Returns a 2-tuple
             finished = self.process_command(command)
-
-
 
 
         print("Thank you for playing!")
@@ -150,8 +149,44 @@ class Game:
         if next_room == None:
             self.textUI.print_command("There is no door!")
         else:
+
+            inventory = ""
+            exitPermission = False
+            if next_room.roomPassword is not None:
+                password = input("Input Password")
+                if password == next_room.roomPassword:
+                    exitPermission = True
+                else:
+                    self.textUI.print_command(f"You need to correct password to open next room")
+                    exitPermission = False
+
+            if next_room.requiredItems is not None:
+                for requiredItem in next_room.requiredItems:
+                    if requiredItem not in inventory:
+                        self.textUI.print_command(f"You need {requiredItem} to open next door")
+                        exitPermission = False
+                    else:
+                        exitPermission = True
+
+            main_helper = MainHelper()
+
+            if next_room.requiredDice is not None:
+                if next_room.requiredDice:
+                    if main_helper.rollDice(roll_again_permission=True, requiredDice=next_room.requiredDice) >= next_room.requiredDice:
+                        self.textUI.print_command(f"Success... You are in the {next_room.description}")
+                        exitPermission = True
+                    else:
+                        self.textUI.print_command("Failed...")
+                        exitPermission = False
+
+
+
+        if exitPermission:
             self.current_room = next_room
             self.textUI.print_command(self.current_room.get_long_description())
+        else:
+            self.textUI.print_command("No Permission")
+
 
 
 def main():
