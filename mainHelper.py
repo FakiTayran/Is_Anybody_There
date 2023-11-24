@@ -13,8 +13,10 @@ class MainHelper:
             returnedValue = random.randint(min_value, max_value)
             print(f"The values are.... : {returnedValue}")
             if returnedValue >= requiredDice:
+                print("Success...")
                 return returnedValue
             if roll_again_permission:
+                print("Unlucky...")
                 roll_again = input("Press 'y' or 'yes' to roll the dices again.")
             else:
                 roll_again = "No"

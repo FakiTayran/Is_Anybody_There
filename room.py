@@ -8,19 +8,22 @@ from text_ui import TextUI
 
 class Room:
 
-    def __init__(self, description, interactiveItems, requiredItems, requiredDice, roomPassword):
+    def __init__(self, description, interactiveItems, requiredItems, requiredDice, roomPassword,helpMessage):
         """
             Constructor method.
         :param description: Text description for this room
         """
+        self.interactiveItems = interactiveItems if interactiveItems is not None else []
         self.description = description
-        self.interactiveItems = interactiveItems
+        self.helpMessage = helpMessage
+
         self.requiredItems = requiredItems
         self.requiredDice = requiredDice
         self.roomPassword = roomPassword
 
         self.exits = {}  # Dictionary
         self.textUI = TextUI()
+
 
 
     def set_exit(self, direction, neighbour):
@@ -41,14 +44,16 @@ class Room:
             Fetch a short text description.
         :return: text description
         """
-        return self.description
+        return f"{self.description}"
 
     def get_long_description(self):
         """
             Fetch a longer description including available exits.
         :return: text description
         """
-        return f'Location: {self.description}, Exits: {self.get_exits()}.'
+        interactive_item_names = [item.name for item in self.interactiveItems if
+                                  item is not None and hasattr(item, "name")]
+        return f'Location: {self.description}, Exits: {self.get_exits()} and room includes {", ".join(interactive_item_names)}.'
 
     def get_exits(self):
         """
