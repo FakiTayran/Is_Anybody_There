@@ -37,7 +37,7 @@ class Game:
 
     def createInteractiveItems(self):
         self.capsul1 = InteractiveItem("capsul1", [])
-        self.capsul2 = InteractiveItem("capsul2", [])
+        self.capsul2 = InteractiveItem("capsul2", ["A note contains number (1241)"])
         self.wardrobe1 = InteractiveItem("wardrobe1", [])
         self.wardrobe2 = InteractiveItem("wardrobe2", ["crowbar"])
 
@@ -55,15 +55,15 @@ class Game:
         self.createInteractiveItems()
 
         self.capsul = Room("an overturned and damaged cryonics capsul",None,None,None,None,"You can try to 'go up' to get out from capsul. You need luck to open caqpsul.A piece of stone from the collapsed building has fallen on you, you have to move it.")
-        self.storage = Room("destroyed cryonics capsules warehouse",[self.capsul1,self.capsul,self.wardrobe1,self.wardrobe2],None, 90, None,f"You can use 'S' try to search interactive items.Maybe you can find some way to get out from this shit place")
-        self.corridor = Room("in a corridor",None,["crowbar"], 90, None,'You are alone in this huge building try to pick one door to get in')
-        self.lab = Room("in a cryonics lab",[self.stretcher,self.dead_body1,self.dead_body2],["access_card"], None, 1241,'Try to search everything in room')
-        self.surgery = Room("in the surgery",[self.dead_body3], ["access_card"], None, None,"You can pess I to open your backbag")
-        self.office = Room("in the computing admin office",None,["access_card"], None, 4043,"You have to find manager's office key")
-        self.managerOffice = Room("in the manager office","safe_case",["manager_office_key"], None, None,"We can try to open safe case.")
+        self.storage = Room("destroyed cryonics capsules warehouse",[self.capsul1,self.capsul2,self.wardrobe1,self.wardrobe2],None, 90, None,f"You can use 'search command' try to search interactive items.Maybe you can find some way to get out from this shit place")
+        self.corridor = Room("corridor",None,["crowbar"], 90, None,'You are alone in this huge building try to pick one door to get in')
+        self.lab = Room("cryonics lab",[self.stretcher,self.dead_body1,self.dead_body2],["access_card"], None, 1241,'Try to search everything in room')
+        self.surgery = Room("surgery",[self.dead_body3], ["access_card"], None, None,"You can pess I to open your backbag")
+        self.office = Room("the computing admin office",None,["access_card"], None, 4043,"You have to find manager's office key")
+        self.managerOffice = Room("manager office","safe_case",["manager_office_key"], None, None,"We can try to open safe case.")
         self.stairs = Room("building stairs",[self.dead_body4], ["keylock"], None, None,"One more dead body. Try to search. It smells shit.")
-        self.lobby = Room("in the lobby",None,None, 100, None,"You have to prey to stay alive good luck.")
-        self.outside = Room("everywhere is destroyed",None, ["building_key"], None,None,"You need more help that I gave.")
+        self.lobby = Room("lobby",None,None, 100, None,"You have to prey to stay alive good luck.")
+        self.outside = Room("nothing",None, ["building_key"], None,None,"You need more help that I gave.")
 
         self.setExits()
 
@@ -133,7 +133,7 @@ class Game:
             Show a list of available commands.
         :return: None
         """
-        return ['help', 'go', 'quit',"search"]
+        return ['help', 'go', 'quit','showexits',"search",'backpack']
 
     def process_command(self, command):
         """
@@ -154,7 +154,10 @@ class Game:
             want_to_quit = True
         elif command_word == "SEARCH":
             self.do_search_command(second_word)
-            return
+        elif command_word == "BACKPACK":
+            self.user.backpack.getItems()
+        elif command_word == "SHOWEXITS":
+            self.textUI.print_command(self.current_room.get_exits())
         else:
             # Unknown command...
             self.textUI.print_command("Don't know what you mean.")
