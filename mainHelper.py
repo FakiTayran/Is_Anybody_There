@@ -22,8 +22,8 @@ class MainHelper:
                 roll_again = "No"
         return returnedValue
 
-    def crafting(self,item1,item2):
+    def crafting(self,item1,item2,backpack):
         craftHelper = CraftHelper()
-        return craftHelper.possibleCrafts(item1,item2)
+        return craftHelper.possibleCrafts(item1,item2,backpack)
 
 

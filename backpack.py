@@ -32,7 +32,8 @@ class Backpack:
         return item in self.contents
 
     def getItems(self):
-        return  self.contents
+        print(self.contents)
+        return self.contents
 class NotInBackpackError(Exception):
     def __init__(self, item, message):
         print(f'{item} {message}')
