@@ -8,7 +8,7 @@ from text_ui import TextUI
 
 class Room:
 
-    def __init__(self, description, interactiveItems, requiredItems, requiredDice, roomPassword,helpMessage):
+    def __init__(self, description, interactiveItems, requiredItems, requiredDice, roomPassword,helpMessage,enemy):
         """
             Constructor method.
         :param description: Text description for this room
@@ -23,6 +23,7 @@ class Room:
 
         self.exits = {}  # Dictionary
         self.textUI = TextUI()
+        self.enemy = enemy
 
 
 
@@ -35,7 +36,8 @@ class Room:
         :param neighbour: The room that this direction takes you to
         :return: None
         """
-
+        if direction == 'backwards':
+            self.requiredDice = None
 
         self.exits[direction] = neighbour
 

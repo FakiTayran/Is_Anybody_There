@@ -18,17 +18,21 @@ class TextUI:
         """
         word1 = None
         word2 = None
+        word3 = None
         print('> ', end='')
         input_line = input()
         if input_line != "":
             all_words = input_line.split()
             word1 = all_words[0]
+            if len(all_words) > 2:
+                word3 = all_words[2]
+
             if len(all_words) > 1:
                 word2 = all_words[1]
             else:
                 word2 = None
             # Just ignore any other words
-        return (word1, word2)
+        return (word1, word2,word3)
 
     def print_command(self, text):
         """

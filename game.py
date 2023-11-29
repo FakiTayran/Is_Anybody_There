@@ -21,6 +21,7 @@ from mainHelper import MainHelper
 from backpack import Backpack
 from hero import Hero
 from interactiveItem import InteractiveItem
+from enemy import Enemy
 import time
 
 
@@ -35,20 +36,21 @@ class Game:
         self.create_rooms()
         self.current_room = self.capsul
         self.previous_room = None
+        self.hard = True
 
     def createInteractiveItems(self):
-        self.capsul1 = InteractiveItem("capsul1", ["manager_office_key_part2"])
-        self.capsul2 = InteractiveItem("capsul2", ["A note contains number (1241)"])
-        self.wardrobe1 = InteractiveItem("wardrobe1", [])
-        self.wardrobe2 = InteractiveItem("wardrobe2", ["crowbar"])
+        self.capsul1 = InteractiveItem("capsul1", ["manager_office_key_part2"],None)
+        self.capsul2 = InteractiveItem("capsul2", ["A note contains number (1241)"],None)
+        self.wardrobe1 = InteractiveItem("wardrobe1", ["key"],None)
+        self.wardrobe2 = InteractiveItem("wardrobe2", ["crowbar"],None)
 
-        self.stretcher = InteractiveItem("stretcher", ["sheet", "pillow"])
-        self.dead_body1 = InteractiveItem("dead_body1", ["note", "key"])
-        self.dead_body2 = InteractiveItem("dead_body2", ["access_card","A note, that says 'I love you dad'"])
-        self.dead_body3 = InteractiveItem("dead_body3", ["A picture with an adult man and a young girl, that is also includes a note under them.'Happy birthday dad'"])
-        self.dead_body4 = InteractiveItem("dead_body4",["manager_office_key_part1"])
-        self.safe_case = InteractiveItem("safe_case", ["gun","£10000"])
-        self. dead_body5 = InteractiveItem("dead_body5", ["bullet"])
+        self.stretcher = InteractiveItem("stretcher", ["sheet", "pillow"],None)
+        self.dead_body1 = InteractiveItem("dead_body1", ["note", "cable"],None)
+        self.dead_body2 = InteractiveItem("dead_body2", ["access_card","A note, that says 'I love you dad'"],None)
+        self.dead_body3 = InteractiveItem("dead_body3", ["A picture with an adult man and a young girl, that is also includes a note under them.'Happy birthday dad'"],None)
+        self.dead_body4 = InteractiveItem("dead_body4",["manager_office_key_part1"],None)
+        self.safe_case = InteractiveItem("safe_case", ["gun","£10000",'small_gun_part'],123456)
+        self. dead_body5 = InteractiveItem("dead_body5", ["bullet"],None)
     def create_rooms(self):
         """
             Sets up all room assets.
@@ -56,16 +58,16 @@ class Game:
         """
         self.createInteractiveItems()
 
-        self.capsul = Room("an overturned and damaged cryonics capsul",None,None,None,None,"You can try to 'go up' to get out from capsul. You need luck to open capsul.A piece of stone from the collapsed building has fallen on you, you have to move it.")
-        self.storage = Room("destroyed cryonics capsules warehouse",[self.capsul1,self.capsul2,self.wardrobe1,self.wardrobe2],None, 90, None,f"You can use 'search command' try to search interactive items.Maybe you can find some way to get out from this shit place")
-        self.corridor = Room("corridor",None,["crowbar"], 90, None,'You are alone in this huge building try to pick one door to get in')
-        self.lab = Room("cryonics lab",[self.stretcher,self.dead_body1,self.dead_body2],None, None, 1241,'Try to search everything in room')
-        self.surgery = Room("surgery",[self.dead_body3], ["access_card"], None, None,"You can write backpack to see your items in backbag")
-        self.office = Room("the computing admin office",[self.dead_body4],["access_card"], None, self.user.birthday,"You have to fixed manager's office key")
-        self.managerOffice = Room("manager office",[self.safe_case],["manager_office_key"], None, None,"We can try to open safe case.")
-        self.stairs = Room("building stairs",[self.dead_body5], ["keylock"], None, None,"One more dead body. Try to search. It smells shit.")
-        self.lobby = Room("lobby",None,None, 100, None,"You have to prey to stay alive good luck.")
-        self.outside = Room("nothing",None, ["building_key"], None,None,"You need more help that I gave.")
+        self.capsul = Room("an overturned and damaged cryonics capsul",None,None,None,None,"You can try to 'go up' to get out from capsul. You need luck to open capsul.A piece of stone from the collapsed building has fallen on you, you have to move it.",None)
+        self.storage = Room("destroyed cryonics capsules warehouse",[self.capsul1,self.capsul2,self.wardrobe1,self.wardrobe2],None, 90, None,f"You can use 'search command' try to search interactive items.Maybe you can find some way to get out from this shit place",None)
+        self.corridor = Room("corridor",None,["crowbar"], 90, None,'You are alone in this huge building try to pick one door to get in',None)
+        self.lab = Room("cryonics lab",[self.stretcher,self.dead_body1,self.dead_body2],None, None, 1241,'Try to search everything in room',None)
+        self.surgery = Room("surgery",[self.dead_body3], ["access_card"], None, None,"You can write backpack to see your items in backbag",None)
+        self.office = Room("the computing admin office",[self.dead_body4],["access_card"], None, self.user.birthday,"You have to fixed manager's office key",None)
+        self.managerOffice = Room("manager office",[self.safe_case],["manager_office_key"], None, None,"We can try to open safe case. Try think simple.",None)
+        self.stairs = Room("building stairs",[self.dead_body5], ["keylock"], None, None,"One more dead body. Try to search. It smells shit.",None)
+        self.lobby = Room("lobby",None,None, None, None,"You have to prey to stay alive good luck.")
+        self.outside = Room("nothing",None, ["building_key"], None,None,"You need more help that I gave.",Enemy("Kaladdune",100,10))
 
         self.setExits()
 
@@ -112,6 +114,9 @@ class Game:
         while self.user.birthday is None or "":
             self.user.birthday = input("Write your birthday with exact that format 'MMDDYYYY'... \n")
             return
+        mode = input("Press 'H' or write 'Hard' if you want hard level game")
+        if mode == 'H'.lower() or 'Help'.lower():
+            self.hard = True
         self.textUI.print_story("A live subject was prepared...")
         while len(self.user.NickName.strip()) < 2:
             self.textUI.print_command("Min 2 characters required!")
@@ -138,7 +143,7 @@ class Game:
             Show a list of available commands.
         :return: None
         """
-        return ['help', 'go', 'quit','showexits',"search",'backpack']
+        return ['help', 'go', 'quit','showexits',"search",'backpack','craft']
 
     def process_command(self, command):
         """
@@ -164,9 +169,6 @@ class Game:
         elif command_word == "SHOWEXITS":
             self.textUI.print_command(self.current_room.get_exits())
         elif command_word == "CRAFT":
-            if third_word is None or "":
-                self.textUI.print_command("Craft with what ? ")
-                return
             self.do_craft_command(second_word,third_word)
 
         else:
@@ -187,10 +189,16 @@ class Game:
         if second_word is None or third_word is None:
             self.textUI.print_command("Craft what?")
             return
+
+        if third_word is None or "":
+            self.textUI.print_command("Craft with what ? ")
+            return
+
         mainHelper = MainHelper()
         mainHelper.crafting(second_word,third_word,self.user.backpack)
 
     def do_search_command(self, second_word):
+
         if second_word is None:
             self.textUI.print_command("Search what?")
             return
@@ -202,11 +210,24 @@ class Game:
             matching_item = next((item for item in self.current_room.interactiveItems if
                                   hasattr(item, "name") and item.name == second_word), None)
 
+            if matching_item.password is not None:
+                password = input("Password 6 number\n")
+
+                while str(password) != str(matching_item.password):
+                    again = input("Input Y or YES if you want to try again\n").lower()
+                    if again != 'Y'.lower() or 'YES'.lower():
+                        password = input("Password 6 number\n")
+                        if password != matching_item.password:
+                            self.textUI.print_command("Think Simple...")
+
+
+
             if matching_item:
                 for content_item in matching_item.contains:
                     self.textUI.print_command(f"Found {content_item}")
                     answer = input("Do you want to add this item into your bag  (yes/no) or (y/n)? \n")
                     if answer.lower() == "yes" or answer.lower() == "y":
+                        self.current_room.interactiveItems.remove(content_item) #dolaptan itemi çıkarıyoruz
                         self.user.backpack.contents.append(content_item)
                         self.textUI.print_command(f"{content_item} was put into bag ")
                 if len(matching_item.contains) == 0:
@@ -222,8 +243,8 @@ class Game:
         :param second_word: the direction the player wishes to travel in
         :return: None
         """
-        exitPermission = False
 
+        exitPermission = False
         if second_word == None:
             # Missing second word...
             self.textUI.print_command("Go where?")
@@ -267,8 +288,10 @@ class Game:
                         exitPermission = True
                     else:
                         self.textUI.print_command("Failed...")
+                        if  self.hard:
+                            self.user.health -= 1
+                            self.textUI.print_command(f'Health = {self.user.health}')
                         return
-
 
 
         if exitPermission:
