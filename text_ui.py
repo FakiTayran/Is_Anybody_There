@@ -51,5 +51,4 @@ class TextUI:
         for char in text:
             print(char, end='')
             time.sleep(0.05)  # there is a 0.5 second for each word
-
         print('\n')

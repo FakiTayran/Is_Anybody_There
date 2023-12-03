@@ -12,8 +12,9 @@ class MainHelper:
             print("Rolling the dices...")
             returnedValue = random.randint(min_value, max_value)
             print(f"The values are.... : {returnedValue}")
-            if returnedValue >= requiredDice:
-                print("Success...")
+            if requiredDice is not None:
+                if returnedValue >= requiredDice:
+                    print("Success...")
                 return returnedValue
             if roll_again_permission:
                 print("Unlucky...")
@@ -26,4 +27,7 @@ class MainHelper:
         craftHelper = CraftHelper()
         return craftHelper.possibleCrafts(item1,item2,backpack)
 
+    def getPossibleCraft(self):
+        craftHelper = CraftHelper()
+        return craftHelper.possibleCrafts()
 

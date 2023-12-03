@@ -6,3 +6,9 @@ class InteractiveItem(Item):
         self.contains = contains
         self.password = password
 
+    def removeContentFromInteractiveItemList(self, item_name):
+        if item_name in self.contains:
+            self.contains.remove(item_name)
+            return True
+        else:
+            return False

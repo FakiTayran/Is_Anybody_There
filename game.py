@@ -36,7 +36,10 @@ class Game:
         self.create_rooms()
         self.current_room = self.capsul
         self.previous_room = None
-        self.hard = True
+        self.hard = False
+        self.hardlevel = 0
+        self.loadGameSetting()
+
 
     def createInteractiveItems(self):
         self.capsul1 = InteractiveItem("capsul1", ["manager_office_key_part2"],None)
@@ -62,12 +65,12 @@ class Game:
         self.storage = Room("destroyed cryonics capsules warehouse",[self.capsul1,self.capsul2,self.wardrobe1,self.wardrobe2],None, 90, None,f"You can use 'search command' try to search interactive items.Maybe you can find some way to get out from this shit place",None)
         self.corridor = Room("corridor",None,["crowbar"], 90, None,'You are alone in this huge building try to pick one door to get in',None)
         self.lab = Room("cryonics lab",[self.stretcher,self.dead_body1,self.dead_body2],None, None, 1241,'Try to search everything in room',None)
-        self.surgery = Room("surgery",[self.dead_body3], ["access_card"], None, None,"You can write backpack to see your items in backbag",None)
+        self.surgery = Room("surgery",[self.dead_body3], ["access_card"], None, None,"You can write backpack to see your items in backbag",Enemy("Zombie",30,5,None,50))
         self.office = Room("the computing admin office",[self.dead_body4],["access_card"], None, self.user.birthday,"You have to fixed manager's office key",None)
         self.managerOffice = Room("manager office",[self.safe_case],["manager_office_key"], None, None,"We can try to open safe case. Try think simple.",None)
         self.stairs = Room("building stairs",[self.dead_body5], ["keylock"], None, None,"One more dead body. Try to search. It smells shit.",None)
-        self.lobby = Room("lobby",None,None, None, None,"You have to prey to stay alive good luck.")
-        self.outside = Room("nothing",None, ["building_key"], None,None,"You need more help that I gave.",Enemy("Kaladdune",100,10))
+        self.lobby = Room("lobby",None,None, None, None,"You have to prey to stay alive good luck.",Enemy("Boss",400,100,"building_key",80))
+        self.outside = Room("nothing",None, ["building_key"], None,None,"You need more help that I gave.",None)
 
         self.setExits()
 
@@ -114,15 +117,21 @@ class Game:
         while self.user.birthday is None or "":
             self.user.birthday = input("Write your birthday with exact that format 'MMDDYYYY'... \n")
             return
-        mode = input("Press 'H' or write 'Hard' if you want hard level game")
-        if mode == 'H'.lower() or 'Help'.lower():
-            self.hard = True
+
         self.textUI.print_story("A live subject was prepared...")
         while len(self.user.NickName.strip()) < 2:
             self.textUI.print_command("Min 2 characters required!")
             self.user.NickName = input("Write your name... \n")
         return self.user.NickName
 
+    def loadGameSetting(self):
+        mode = input("Press 'H' or write 'Hard' if you want hard level game or skip with any button\n")
+        if mode == 'H'.lower() or 'Hard'.lower():
+            self.hard = True
+            hardlevel = input("Input hard level from 1 to 10\n")
+            self.hardlevel = hardlevel
+        else:
+            self.hard = False
 
     def print_welcome(self):
         """
@@ -143,7 +152,7 @@ class Game:
             Show a list of available commands.
         :return: None
         """
-        return ['help', 'go', 'quit','showexits',"search",'backpack','craft']
+        return ['help', 'go', 'quit','showexits',"search",'backpack','craft',"showpossiblecrafts"]
 
     def process_command(self, command):
         """
@@ -170,7 +179,9 @@ class Game:
             self.textUI.print_command(self.current_room.get_exits())
         elif command_word == "CRAFT":
             self.do_craft_command(second_word,third_word)
-
+        elif command_word == "SHOWPOSSIBLECRAFTS":
+            mainHelper = MainHelper()
+            self.textUI.print_command(mainHelper.getPossibleCraft())
         else:
             # Unknown command...
             self.textUI.print_command("Don't know what you mean.")
@@ -217,7 +228,7 @@ class Game:
                     again = input("Input Y or YES if you want to try again\n").lower()
                     if again != 'Y'.lower() or 'YES'.lower():
                         password = input("Password 6 number\n")
-                        if password != matching_item.password:
+                        if str(password) != str(matching_item.password):
                             self.textUI.print_command("Think Simple...")
 
 
@@ -225,11 +236,14 @@ class Game:
             if matching_item:
                 for content_item in matching_item.contains:
                     self.textUI.print_command(f"Found {content_item}")
-                    answer = input("Do you want to add this item into your bag  (yes/no) or (y/n)? \n")
-                    if answer.lower() == "yes" or answer.lower() == "y":
-                        self.current_room.interactiveItems.remove(content_item) #dolaptan itemi çıkarıyoruz
-                        self.user.backpack.contents.append(content_item)
-                        self.textUI.print_command(f"{content_item} was put into bag ")
+                    if self.addBagPermisson():
+                        item_removed = matching_item.removeContentFromInteractiveItemList(content_item)
+                        if item_removed:
+                            self.user.backpack.contents.append(content_item)
+                            self.textUI.print_command(f"{content_item} was put into the bag")
+                        else:
+                            self.textUI.print_command(f"Could not remove {content_item} from {matching_item.name}")
+
                 if len(matching_item.contains) == 0:
                     self.textUI.print_command("There is no item to collect")
             else:
@@ -283,26 +297,101 @@ class Game:
 
             if next_room.requiredDice is not None:
                 if next_room.requiredDice:
-                    if main_helper.rollDice(roll_again_permission=True, requiredDice=next_room.requiredDice) >= next_room.requiredDice:
-                        self.textUI.print_command(f"Success... You are in the {next_room.description}")
-                        exitPermission = True
-                    else:
-                        self.textUI.print_command("Failed...")
-                        if  self.hard:
-                            self.user.health -= 1
-                            self.textUI.print_command(f'Health = {self.user.health}')
-                        return
+                    if self.hard:
+                        if self.user.health > 0:
+                            answer = "y"
+                            while answer == "y" :
+                                if self.user.health <= 0:
+                                    self.textUI.print_story("You were brutally murdered")
+                                    self.textUI.print_story("Thank you for playing.")
+                                    exit()
+                                if main_helper.rollDice(False,next_room.requiredDice) >= next_room.requiredDice:
+                                    self.textUI.print_command(f"Success... You are in the {next_room.description}")
+                                    exitPermission = True
+                                    answer = "n"
+                                else:
+                                    self.user.health -= 1
+                                    self.textUI.print_command(f'Health = {self.user.health}')
+                                    exitPermission = False
+                                    answer = input("if you want to try one more time press y\n")
 
+
+
+                    else:
+                        if main_helper.rollDice(roll_again_permission=True, requiredDice=next_room.requiredDice) >= next_room.requiredDice:
+                            self.textUI.print_command(f"Success... You are in the {next_room.description}")
+                            exitPermission = True
+                        else:
+                            self.textUI.print_command("Failed...")
+                            return
+
+        if next_room.requiredDice is None and next_room.roomPassword is None and next_room.requiredItems is None:
+            exitPermission = True
 
         if exitPermission:
             self.previous_room = self.current_room
             self.current_room = next_room
+            self.fight()
+
             self.textUI.print_command(self.current_room.get_long_description())
+            if self.current_room == self.outside:
+                self.textUI.print_story(" a young girl is next to you, a middle-aged man is looking at you. \n")
+                self.textUI.print_story(" Young Girl(terrified) :  what happened? \n")
+                self.textUI.print_story(".........................................")
+                self.textUI.print_story("Is Anybody There is over. Thanks for playing. See you in the 2nd game.")
+                exit()
+
+
+
         else:
             self.textUI.print_command("No Permission")
 
+    def fight(self):
+        if self.hard:
+            if self.current_room.enemy is not None:
+                main_helper = MainHelper()
+                while self.current_room.enemy.health >= 0:
+                    if self.user.health > 0:
+                        self.textUI.print_story("Dice for us")
+                        diceforUser = main_helper.rollDice(roll_again_permission=False,
+                                                           requiredDice=self.current_room.requiredDice)
+                        self.textUI.print_story(f" Dice for us : {diceforUser}")
+                        if diceforUser > int(self.current_room.enemy.level):
+                            self.textUI.print_story("Critic Hit ! 4X")
+                            self.current_room.enemy.health -= (4 * diceforUser)
+                        else:
+                            self.current_room.enemy.health -= diceforUser
 
+                        diceforEnemy = main_helper.rollDice(roll_again_permission=False,
+                                                            requiredDice=self.current_room.requiredDice)
+                        self.textUI.print_story(f" Dice for enemy : {diceforEnemy}")
 
+                        if diceforEnemy > diceforUser:
+                            self.user.health -= diceforEnemy / 10 * int(self.hardlevel)
+                        else:
+                            self.user.health -= self.current_room.enemy.damage
+                    else:
+                        self.textUI.print_story("You were brutally murdered")
+                        self.textUI.print_story("Thank you for playing.")
+                        exit()
+
+                if self.current_room.enemy.loot is None:
+                    self.textUI.print_story(f"There is no item to loot from {self.current_room.enemy.name} ")
+                else:
+                    for item in self.current_room.enemy.loot:
+                        if self.addBagPermisson:
+                            self.user.backpack.add_item(item)
+                            self.textUI.print_story(f"You dropped {item.name} from {self.current_room.enemy.name} ")
+
+                self.textUI.print_story(f"You destroyed {self.current_room.enemy.name}")
+                self.current_room.enemy = None
+
+    def addBagPermisson(self):
+        answer = input("Do you want to add this item into your bag  (yes/no) or (y/n)? \n")
+        if answer.lower() == "yes" or answer.lower() == "y":
+            return True
+        else:
+            return False
 def main():
     game = Game()
     game.play()

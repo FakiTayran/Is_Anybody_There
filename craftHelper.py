@@ -5,6 +5,8 @@ class CraftHelper:
     def __init__(self):
         self.text_ui = TextUI()
 
+    def getpossibleCrafts(self):
+        return ["cable,small_gun_part : keylock","manager_office_key_part1,manager_office_key_part2 : manager_office_key", "gun,bullet : gun_with_bullet"]
     def possibleCrafts(self,item1, item2,backpack):
        if((item1=="cable" and item2 == "small_gun_part")):
             if(self.inventoryCheck(item1, item2,backpack)):
