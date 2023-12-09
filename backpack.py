@@ -1,4 +1,7 @@
+import logging
+
 class Backpack:
+
     """
     This class represents a backpack which can be used to pick up and store items.
     The backpack has a limited capacity, defined at the time of creation. This class
@@ -24,6 +27,7 @@ class Backpack:
         """
         if len(self.contents) < self.capacity:
             self.contents.append(item)
+            logging.info(f"User collect {item}")
             return True
         return False
 

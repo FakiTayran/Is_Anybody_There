@@ -1,0 +1,50 @@
+2023-12-09 19:01:19,611:ERROR:Error do go command: 'NoneType' object has no attribute 'requiredDice'
+2023-12-09 19:10:25,316:ERROR:Error do go command: 'NoneType' object has no attribute 'requiredDice'
+2023-12-09 19:12:30,454:ERROR:Error do_craft_command: 'CraftHelper' object has no attribute 'inventoryCheck'
+2023-12-09 19:14:02,230:ERROR:Error do_craft_command: 'CraftHelper' object has no attribute 'inventoryCheck'
+2023-12-09 19:16:09,153:ERROR:Error do_craft_command: 'CraftHelper' object has no attribute 'inventory4Check'
+2023-12-09 19:20:25,025:INFO:User command ('go', 'up', None)  
+2023-12-09 19:21:23,368:INFO:User pass to destroyed cryonics capsules warehouse  
+2023-12-09 19:21:23,891:INFO:User command ('y', None, None)  
+2023-12-09 19:34:42,081:INFO:User command ('go', 'up', None)  
+2023-12-09 19:34:49,355:INFO:User pass to destroyed cryonics capsules warehouse  
+2023-12-09 19:34:49,640:INFO:User command ('y', None, None)  
+2023-12-09 19:34:55,435:INFO:User command ('search', 'wardrobe1', None)  
+2023-12-09 19:35:02,204:INFO:User command ('search', 'wardrobe2', None)  
+2023-12-09 19:35:09,315:INFO:User command ('search', 'capsul1', None)  
+2023-12-09 19:35:13,203:INFO:User command ('go', 'forward', None)  
+2023-12-09 19:35:13,203:INFO:User pass to corridor  
+2023-12-09 19:35:16,709:INFO:User command ('go', 'left', None)  
+2023-12-09 19:35:20,131:INFO:User pass to cryonics lab  
+2023-12-09 19:35:27,718:INFO:User command ('go', 'backwards', None)  
+2023-12-09 19:35:30,804:INFO:User command ('go', 'backwards', None)  
+2023-12-09 19:35:30,804:INFO:User pass to destroyed cryonics capsules warehouse  
+2023-12-09 19:35:34,121:INFO:User command ('go', 'forward', None)  
+2023-12-09 19:35:38,545:INFO:User command ('go', 'forward', None)  
+2023-12-09 19:35:46,220:INFO:User command ('go', 'left', None)  
+2023-12-09 19:35:47,511:INFO:User pass to cryonics lab  
+2023-12-09 19:35:54,155:INFO:User command ('search', 'dead_body2', None)  
+2023-12-09 19:36:11,295:INFO:User command ('go', 'forward', None)  
+2023-12-09 19:36:14,256:INFO:User pass to the computing admin office  
+2023-12-09 19:36:25,953:INFO:User command ('search', 'dead_body4', None)  
+2023-12-09 19:36:34,820:INFO:User command ('craft', 'manager_office_key_part1', 'manager_office_key_part2')  
+2023-12-09 19:36:34,820:INFO:User collect manager_office_key
+2023-12-09 19:36:38,702:INFO:User command ('go', 'forward', None)  
+2023-12-09 19:36:38,703:ERROR:Error do go command: 'NoneType' object has no attribute 'requiredDice'
+2023-12-09 19:36:43,724:INFO:User command ('go', 'right', None)  
+2023-12-09 19:36:43,724:INFO:User pass to manager office  
+2023-12-09 19:36:55,670:INFO:User command ('search', 'safe_case', None)  
+2023-12-09 19:37:23,725:INFO:User command ('go', 'backwards', None)  
+2023-12-09 19:37:26,402:INFO:User command ('go', 'backwards', None)  
+2023-12-09 19:37:26,402:INFO:User pass to corridor  
+2023-12-09 19:37:30,606:INFO:User command ('go', 'forward', None)  
+2023-12-09 19:39:09,540:INFO:User command ('go', 'left', None)  
+2023-12-09 19:39:11,270:INFO:User pass to cryonics lab  
+2023-12-09 19:39:18,271:INFO:User command ('search', 'dead_body1', None)  
+2023-12-09 19:39:29,039:INFO:User command ('go', 'backwards', None)  
+2023-12-09 19:39:31,964:INFO:User command ('go', 'forward', None)  
+2023-12-09 19:39:40,072:INFO:User command ('craft', 'cable', 'small_gun_part')  
+2023-12-09 19:39:40,073:INFO:User collect keylock
+2023-12-09 19:39:43,283:INFO:User command ('go', 'forward', None)  
+2023-12-09 19:39:43,283:INFO:User pass to building stairs  
+2023-12-09 19:39:46,197:INFO:User command ('go', 'down', None)  

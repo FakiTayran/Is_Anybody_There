@@ -34,22 +34,27 @@ class CraftHelper:
            self.text_ui.print_command("There is no possible craft in the craft list")
            return
 
-    def inventoryCheck(self,item1,item2,backpack):
+    def inventoryCheck(self, item1, item2, backpack):
         """
-               Checks if both items required for crafting are present in the backpack.
-               :param item1: The first item to check in the backpack.
-               :param item2: The second item to check in the backpack.
-               :param backpack: The backpack object containing the player's items.
-               :return: True if both items are in the backpack, False otherwise.
+        Checks if both items required for crafting are present in the backpack.
+        :param item1: The first item to check in the backpack.
+        :param item2: The second item to check in the backpack.
+        :param backpack: The backpack object containing the player's items.
+        :return: True if both items are in the backpack, False otherwise.
         """
-        item1InBackpack = backpack.check_item(item1)
-        item2InBackpack = backpack.check_item(item2)
-        if (item1InBackpack and item2InBackpack):
-            self.text_ui.print_command("Craft Successful...")
-            return True
-        else:
-            self.text_ui.print_command("Not enough item for crafting...")
+        try:
+            item1_in_backpack = backpack.check_item(item1)
+            item2_in_backpack = backpack.check_item(item2)
+            if item1_in_backpack and item2_in_backpack:
+                self.text_ui.print_command("Craft Successful...")
+                return True
+            else:
+                self.text_ui.print_command("Not enough items for crafting...")
+                return False
+        except Exception as e:  # Replace 'Exception' with a more specific exception if applicable
+            self.text_ui.print_command(f"Error checking items in backpack: {str(e)}")
             return False
+
     def resultOfCrafting(self,item1,item2,resultItem,backpack):
         """
                Performs the crafting operation by removing the used items and adding the
