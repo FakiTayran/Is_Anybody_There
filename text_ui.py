@@ -44,7 +44,7 @@ class TextUI:
 
     def print_story(self, text):
         """
-            Displays text to the console.
+            Displays text like an story to the console.
         :param text: Text to be displayed
         :return: None
         """

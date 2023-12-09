@@ -7,7 +7,21 @@ Create a room described "description". Initially, it has no exits. The
 from text_ui import TextUI
 
 class Room:
+    """
+        Represents a room or location in the game. Each room has a description, a list of interactive items,
+        required items for entry, and potentially an enemy. The room also stores exits to other rooms.
 
+        Attributes:
+            description (str): Textual description of the room (e.g., 'kitchen', 'an open courtyard').
+            interactiveItems (list): A list of InteractiveItem objects contained in the room.
+            requiredItems (list): Items required to enter or interact with the room.
+            requiredDice (int): Dice value required to enter the room, if any.
+            roomPassword (str): Password required to enter the room, if any.
+            helpMessage (str): A message providing help or hints about the room.
+            enemy (Enemy): An Enemy object present in the room, if any.
+            exits (dict): A dictionary mapping directions to neighboring Room objects.
+            textUI (TextUI): An instance of TextUI for text-based interaction.
+    """
     def __init__(self, description, interactiveItems, requiredItems, requiredDice, roomPassword,helpMessage,enemy):
         """
             Constructor method.

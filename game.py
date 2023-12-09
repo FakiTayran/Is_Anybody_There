@@ -29,7 +29,9 @@ class Game:
 
     def __init__(self):
         """
-        Initialises the game.
+        Initializes the 'Adventure World' game. This constructor sets up the initial
+        game settings, creates the rooms, initializes the player character, and
+        prepares the game environment.
         """
         self.textUI = TextUI()
         self.createHero()
@@ -42,6 +44,11 @@ class Game:
 
 
     def createInteractiveItems(self):
+        """
+               Creates interactive items in the game. Each interactive item has a name,
+               contains a list of items, and may require a password for access.
+        """
+
         self.capsul1 = InteractiveItem("capsul1", ["manager_office_key_part2"],None)
         self.capsul2 = InteractiveItem("capsul2", ["A note contains number (1241)"],None)
         self.wardrobe1 = InteractiveItem("wardrobe1", ["key"],None)
@@ -56,8 +63,9 @@ class Game:
         self. dead_body5 = InteractiveItem("dead_body5", ["bullet"],None)
     def create_rooms(self):
         """
-            Sets up all room assets.
-        :return: None
+        Sets up all the rooms in the game. This method initializes each room with a
+        description, interactive items, required items for entry, a password if necessary,
+        and a help message for the player.
         """
         self.createInteractiveItems()
 
@@ -76,6 +84,11 @@ class Game:
 
 
     def setExits(self):
+
+        """
+               Defines the exits for each room. This method links rooms together by specifying
+               which room is accessible from each exit direction.
+        """
         self.capsul.set_exit("up", self.storage)
         self.storage.set_exit("forward", self.corridor)
         self.corridor.set_exit("backwards", self.storage)
@@ -95,9 +108,10 @@ class Game:
 
     def play(self):
         """
-            The main play loop.
-        :return: None
+        The main gameplay loop. This method repeatedly prompts the player for input,
+        processes the input commands, and continues until the game ends.
         """
+
         self.print_welcome()
 
         finished = False
@@ -109,6 +123,12 @@ class Game:
         print("Thank you for playing!")
 
     def createHero(self):
+
+        """
+                Initializes the hero character for the game. This method prompts the player
+                to input the name and birthday for their character, and creates a Hero object.
+        """
+
         backpack = Backpack(10)
         hero = Hero("", backpack)
         self.user = hero
@@ -125,8 +145,13 @@ class Game:
         return self.user.NickName
 
     def loadGameSetting(self):
+        """
+                Loads game settings based on player input. This method allows the player to choose
+                the difficulty level of the game and sets the game accordingly.
+        """
+
         mode = input("Press 'H' or write 'Hard' if you want hard level game or skip with any button\n")
-        if mode == 'H'.lower() or 'Hard'.lower():
+        if mode == 'H'.lower() or mode == 'Hard'.lower():
             self.hard = True
             hardlevel = input("Input hard level from 1 to 10\n")
             self.hardlevel = hardlevel

@@ -2,12 +2,24 @@ import text_ui
 from text_ui import TextUI
 
 class CraftHelper:
+    """
+        This class provides functionalities for crafting new items by combining existing items.
+        It utilizes a backpack instance to check for available items and to update the inventory
+        after crafting.
+    """
     def __init__(self):
         self.text_ui = TextUI()
 
     def getpossibleCrafts(self):
+        # Returns a list of possible crafting combinations.
+
         return ["cable,small_gun_part : keylock","manager_office_key_part1,manager_office_key_part2 : manager_office_key", "gun,bullet : gun_with_bullet"]
     def possibleCrafts(self,item1, item2,backpack):
+        #   Checks if two items can be crafted together and performs the crafting operation
+        #   if possible.
+        # :return: A list of strings, each representing a possible crafting combination.
+
+
        if((item1=="cable" and item2 == "small_gun_part")):
             if(self.inventoryCheck(item1, item2,backpack)):
                 self.resultOfCrafting(item1, item2, "keylock",backpack)
@@ -23,6 +35,13 @@ class CraftHelper:
            return
 
     def inventoryCheck(self,item1,item2,backpack):
+        """
+               Checks if both items required for crafting are present in the backpack.
+               :param item1: The first item to check in the backpack.
+               :param item2: The second item to check in the backpack.
+               :param backpack: The backpack object containing the player's items.
+               :return: True if both items are in the backpack, False otherwise.
+        """
         item1InBackpack = backpack.check_item(item1)
         item2InBackpack = backpack.check_item(item2)
         if (item1InBackpack and item2InBackpack):
@@ -32,6 +51,11 @@ class CraftHelper:
             self.text_ui.print_command("Not enough item for crafting...")
             return False
     def resultOfCrafting(self,item1,item2,resultItem,backpack):
+        """
+               Performs the crafting operation by removing the used items and adding the
+               crafted item to the backpack.
+               :param resultItem: The item resulting from the crafting.
+        """
         backpack.remove_item(item1)
         backpack.remove_item(item2)
         backpack.add_item(resultItem)
