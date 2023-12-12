@@ -1,18 +1,10 @@
 """
-This class is the main class of the "Adventure World" application.
-'Adventure World' is a very simple, text based adventure game. Users can walk
-around some scenery. That's all. It should really be extended to make it more
-interesting!
-
-To play this game, create an instance of this class and call the "play" method.
-
-This main class creates and initialises all the others: it creates all rooms,
-creates the parser and starts the game. It also evaluates and executes the
-commands that the parser returns.
-
-This game is adapted from the 'World of Zuul' by Michael Kolling and 
-David J. Barnes. The original was written in Java and has been simplified and
-converted to Python by Kingsley Sage.
+'Is Anybody There' is a text based adventure game.
+Users can try to pass other rooms if they are lucky,
+can search items in the room and collect required items to pass other rooms,
+can craft special items to pass locked rooms,
+can find passwords to pass other rooms and collect items from interactive items that in the room
+and can fight with enemies to be a live and they can drop items from enemies to use to pass room.
 """
 import text_ui
 from text_ui import TextUI
@@ -22,7 +14,6 @@ from backpack import Backpack
 from hero import Hero
 from interactiveItem import InteractiveItem
 from enemy import Enemy
-import time
 import logging
 
 
@@ -346,7 +337,7 @@ class Game:
                         self.textUI.print_command(self.current_room.get_long_description())
                         return
 
-                if exitPermission or next_room.roomPassword is not None:
+                if exitPermission or next_room.roomPassword is not None: #Don't allow wrong passwords to pass next room.
                     password = input("Input Password\n")
                     if password == str(next_room.roomPassword):
                         exitPermission = True
@@ -354,7 +345,7 @@ class Game:
                         self.textUI.print_command(f"You need to correct password to open next room")
                         return
 
-                if next_room.requiredItems is not None:
+                if next_room.requiredItems is not None:  #Don't allow to pass next room if required items are not in the user backpack
 
                     for requiredItem in next_room.requiredItems:
                         if requiredItem not in self.user.backpack.contents:
@@ -365,22 +356,22 @@ class Game:
 
                 main_helper = MainHelper()
 
-                if next_room.requiredDice is not None:
+                if next_room.requiredDice is not None:  #If room include required dice
                     if next_room.requiredDice:
-                        if self.hard:
+                        if self.hard: #If hard mode was selected
                             if self.user.health > 0:
                                 answer = "y"
                                 while answer == "y" :
-                                    if self.user.health <= 0:
+                                    if self.user.health <= 0:  #when health reduced under 0 ,finish the game and exit.
                                         self.textUI.print_story(f"You were brutally murdered")
                                         self.textUI.print_story("Thank you for playing.")
                                         exit()
-                                    if main_helper.rollDice(False,next_room.requiredDice) >= next_room.requiredDice:
+                                    if main_helper.rollDice(False,next_room.requiredDice) >= next_room.requiredDice:  #roll dice again
                                         self.textUI.print_command(f"Success... You are in the {next_room.description}")
                                         exitPermission = True
                                         answer = "n"
-                                    else:
-                                        self.user.health -= 1
+                                    else:  #if dice is not higher than requiredDice, get 1 damage to user.
+                                        self.user.health -= 1   #
                                         self.textUI.print_command(f'Health = {self.user.health}')
                                         exitPermission = False
                                         answer = input("if you want to try one more time press y\n")
@@ -398,7 +389,7 @@ class Game:
             if next_room.requiredDice is None and next_room.roomPassword is None and next_room.requiredItems is None:
                 exitPermission = True
 
-            if exitPermission:
+            if exitPermission: #If all checks true,then allow to pass next room
                 self.previous_room = self.current_room
                 self.current_room = next_room
                 self.fight()
@@ -424,14 +415,14 @@ class Game:
 
             return False
 
-    def fight(self):
+    def fight(self):   # Fight with enemy
         try:
-            if self.hard:
-                if self.current_room.enemy is not None:
+            if self.hard: # If hard mode is open then fight will be work.
+                if self.current_room.enemy is not None: # If room contains enemy then fight will be work.
                     self.textUI.print_story(f"You met the {self.current_room.enemy.name} to fight")
                     logging.info(f"User met the {self.current_room.enemy.name} to fight")
                     main_helper = MainHelper()
-                    while self.current_room.enemy.health >= 0:
+                    while self.current_room.enemy.health >= 0: #This is automated while enemy is alive.
                         if self.user.health > 0:
                             self.textUI.print_story("Dice for us")
                             diceforUser = main_helper.rollDice(roll_again_permission=False,
