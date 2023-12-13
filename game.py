@@ -6,7 +6,6 @@ can craft special items to pass locked rooms,
 can find passwords to pass other rooms and collect items from interactive items that in the room
 and can fight with enemies to be a live and they can drop items from enemies to use to pass room.
 """
-import text_ui
 from text_ui import TextUI
 from room import Room
 from mainHelper import MainHelper
@@ -451,7 +450,7 @@ class Game:
                         self.textUI.print_story(f"There is no item to loot from {self.current_room.enemy.name} ")
                     else:
                         for item in self.current_room.enemy.loot:
-                            if self.addBagPermisson:
+                            if self.addBagPermisson():
                                 self.user.backpack.add_item(item)
                                 self.textUI.print_story(f"You dropped {item.name} from {self.current_room.enemy.name} ")
 
